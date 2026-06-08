@@ -2,6 +2,8 @@ package com.cyberSAKura.gateway.jwtauth;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,25 +24,32 @@ public class JwtFilter extends OncePerRequestFilter {
 	@Autowired JwtService jwtService;
 	@Autowired UserDetailsServiceImpl userDetailsService;
 	
+	private Logger log = LoggerFactory.getLogger(JwtFilter.class);
+	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String authHeader = request.getHeader("Authorization");
+		log.debug("Authorization Header : {"+authHeader+"}");
 		String token = null;
 		String subject = null;
 		if(authHeader != null && authHeader.startsWith("Bearer ")) {
 			token = authHeader.substring(7);
 			subject = this.jwtService.extractSubject(token);
-			System.err.println("NAME EXTRACTED FROM AUTH TOKEN  : "+subject);
+			log.debug("Subject Extracted : {"+subject+"}");
 		}
 		if(subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			log.debug("ATTEMPTING AUTHENTICATION");
 			UserDetails details = userDetailsService.loadUserByUsername(subject);
-			System.err.println("USER DETAILS EXTRACTED FROM AUTH TOKEN  : ENTITY[ username:"+details.getUsername()+"; password:"+details.getPassword()+"]");
+			log.debug("User Details Object Loaded : {UserDetails[username:"+details.getUsername()+"; password:"+details.getPassword()+"; authorities:"+details.getAuthorities()+"]}");
 			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
+			log.debug("Created authToken : {"+authToken+"}");
 			authToken.setDetails(new WebAuthenticationDetails(request));
+			log.debug("Details Set : {"+authToken.getDetails()+"}");
 			SecurityContextHolder.getContext().setAuthentication(authToken);
-			System.err.println("AUTHENTICATED : "+SecurityContextHolder.getContext().getAuthentication()!=null);
+			log.debug("Authenticated Context");
 		}
+		log.debug("[JWT] Proceeding to next Filter");
 		filterChain.doFilter(request, response);
 	}
 	
