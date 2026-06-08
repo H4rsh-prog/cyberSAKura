@@ -6,24 +6,26 @@ import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
-public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
+@Service
+public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
 	@Autowired UserRepository repo;
 	
 	@Override
 	public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<UserEntity> entity = repo.findById(username);
 		if(entity.isEmpty()) throw new UsernameNotFoundException("no entity associated with username ["+username+"]");
-		return new UserDetails(entity.get());
+		return new UserDetailsImpl(entity.get());
 	}
-
 }
 
-class UserDetails implements org.springframework.security.core.userdetails.UserDetails {
+class UserDetailsImpl implements UserDetails {
 	private UserEntity userEntity;
 	
-	public UserDetails(UserEntity userEntity) {
+	public UserDetailsImpl(UserEntity userEntity) {
 		this.userEntity = userEntity;
 	}
 
