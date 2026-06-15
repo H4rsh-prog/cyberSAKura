@@ -1,4 +1,4 @@
-package com.cyberSAKura.gateway.userauth;
+package com.cyberSAKura.service.user.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
