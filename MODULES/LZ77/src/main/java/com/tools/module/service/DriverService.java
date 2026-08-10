@@ -11,5 +11,6 @@ public class DriverService {
 	
 	public byte[] compressSinglePhase(byte[] data) {
 		ArrayList<ByteArrayWrapper> dictionary = this.dictionaryService.createDictionary(data);
+		return new byte[0];
 	}
 }
