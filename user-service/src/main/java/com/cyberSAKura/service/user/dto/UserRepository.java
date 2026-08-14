@@ -1,6 +1,9 @@
 package com.cyberSAKura.service.user.dto;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends CrudRepository<UserEntity, String>{	
+@Repository
+public interface UserRepository extends CrudRepository<UserEntity, String>{
+
 }
