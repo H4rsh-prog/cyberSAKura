@@ -2,3 +2,4 @@ start serverStartScript\startDiscoveryService.bat
 start serverStartScript\startApiGateway.bat
 start serverStartScript\startDebugService.bat
 start serverStartScript\startBase64.bat
+start serverStartScript\startLz77.bat

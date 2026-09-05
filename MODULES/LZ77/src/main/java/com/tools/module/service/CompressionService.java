@@ -5,24 +5,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import com.tools.module.model.ByteArrayWrapper;
 
 public class CompressionService {
-	private HashMap<Integer, ByteArrayWrapper> cache_intToBytes = new HashMap<Integer, ByteArrayWrapper>();
+	private HashMap<Integer, byte[]> cache_intToBytes = new HashMap<Integer, byte[]>();
 	
-	public byte[] compressData(ArrayList<ByteArrayWrapper> dictionary, byte[] data) {
+	public byte[] compressData(ArrayList<byte[]> dictionary, byte[] data) {
 		ArrayList<Integer> indiceList = new ArrayList<Integer>();
 		int dictionarySize = dictionary.size();
 		ByteBuffer buffer = ByteBuffer.wrap(data);
 		int index = buffer.position()-1;
 		while(buffer.remaining()>0) {
 			for(int i=0;i<dictionarySize;i++) {
-				byte[] query = dictionary.get(i).getData();
+				byte[] query = dictionary.get(i);
 				int searchFieldSize = Math.min(query.length, buffer.remaining());
 				byte[] searchField = new byte[searchFieldSize];
 				buffer.get(index, searchField);
 				if(Arrays.equals(query, searchField)) {
-					byte[] parsedDictionaryIndex = intToBytes(i).getData();
+					byte[] parsedDictionaryIndex = intToBytes(i);
 					buffer = compressBuffer(buffer.array(), index, query.length, parsedDictionaryIndex);
 					indiceList.add(index);
 					index += parsedDictionaryIndex.length;
@@ -48,19 +47,19 @@ public class CompressionService {
 		return buffer;
 	}
 	public byte[] RLEBytes(byte[] bytes) {
+		// This method is Runtime Length Encoding the bytes by left padding the byte array with its length
 		int byteSize = bytes.length;
 		if(byteSize>254) throw new RuntimeException("Byte Length Overflow");
 		ByteBuffer buffer = ByteBuffer.allocate(byteSize+1);
-		buffer.put(0, intToBytes(byteSize).getData()[0]);
+		buffer.put(0, intToBytes(byteSize)[0]);
 		buffer.put(1, bytes);
 		buffer.rewind();
 		return buffer.array();
 	}
-	
-	private ByteArrayWrapper intToBytes(int intVal) {
+	private byte[] intToBytes(int intVal) {
 		if(this.cache_intToBytes.containsKey(intVal)) return this.cache_intToBytes.get(intVal);
 		if(intVal==0) {
-			ByteArrayWrapper result = new ByteArrayWrapper(new byte[] {0x0});
+			byte[] result = new byte[] {0x0};
 			this.cache_intToBytes.put(intVal, result);
 			return result;
 		}
@@ -87,9 +86,8 @@ public class CompressionService {
 			 * intVal = 01011001 00001001 >> 8 = 00000000 01011001
 			 * */
 		}
-		ByteArrayWrapper wrappedResult = new ByteArrayWrapper(result);
-		this.cache_intToBytes.put(intVal, wrappedResult);
-		return wrappedResult;
+		this.cache_intToBytes.put(intVal, result);
+		return result;
 	}
 	// FOR SOME REASON MATH.CEILDIV IS THROWING AN UNRESOLVED EXCEEPTION AS IT COULD NOT FIND IT
 	int ceilDiv(int x, int y) {
