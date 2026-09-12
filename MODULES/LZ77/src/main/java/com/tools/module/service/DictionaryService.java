@@ -147,7 +147,7 @@ public class DictionaryService {
 		for(int i=0;i<len;i++) {
 			byte[] superset = lengthPrioritizedList.get(i).getData();
 			int supersetLen = superset.length;
-			for(int j=0;j<len;j++) {
+			for(int j=i+1;j<len;j++) {
 				byte[] subset = lengthPrioritizedList.get(j).getData();
 				int subsetLen = subset.length;
 				// CHECKING IF SUBSET
