@@ -17,8 +17,8 @@ import com.tools.module.model.ByteArrayWrapper;
 
 @Service
 public class DictionaryService {
-	private static int maxBytesUsed = 1;
-	private static int dictionaryLimit = 254;
+	private int maxBytesUsed = 1;
+	private int dictionaryLimit = 254;
 	static final int additionalMarkerBytes = 1;
 	
 	//LINEAR APPROACH
