@@ -141,7 +141,7 @@ public class DictionaryService {
 		}
 		
 		// FILTERING OVERLAPPING PATTERNS
-		ArrayList<ByteArrayWrapper> lengthPrioritizedList = generateSortedBytesFromFrequency(frequencyTable, PRIORITY.FREQUENCY);
+		ArrayList<ByteArrayWrapper> lengthPrioritizedList = generateSortedBytesFromFrequency(frequencyTable, PRIORITY.LENGTH);
 		Set<ByteArrayWrapper> invalidKeys = new HashSet<ByteArrayWrapper>();
 		len = lengthPrioritizedList.size();
 		for(int i=0;i<len;i++) {
@@ -174,7 +174,7 @@ public class DictionaryService {
 		ArrayList<ByteArrayWrapper> sortedBytes = new ArrayList<>();
 		sortedBytes.addAll(frequencyTable.keySet());
 		switch (priority) {
-		case FREQUENCY:
+		case LENGTH:
 			sortedBytes.sort(new Comparator<ByteArrayWrapper>() {
 				@Override
 				public int compare(ByteArrayWrapper o1, ByteArrayWrapper o2) {
@@ -183,7 +183,7 @@ public class DictionaryService {
 				}
 			});
 			break;
-		case LENGTH:
+		case FREQUENCY:
 			sortedBytes.sort(new Comparator<ByteArrayWrapper>() {
 				@Override
 				public int compare(ByteArrayWrapper o1, ByteArrayWrapper o2) {
