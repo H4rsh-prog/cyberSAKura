@@ -17,8 +17,8 @@ import com.tools.module.model.ByteArrayWrapper;
 
 @Service
 public class DictionaryService {
-	private static int maxBytesUsed = 1;
-	private static int dictionaryLimit = 254;
+	private int maxBytesUsed = 1;
+	private int dictionaryLimit = 254;
 	static final int additionalMarkerBytes = 1;
 	
 	//LINEAR APPROACH
@@ -141,13 +141,13 @@ public class DictionaryService {
 		}
 		
 		// FILTERING OVERLAPPING PATTERNS
-		ArrayList<ByteArrayWrapper> lengthPrioritizedList = generateSortedBytesFromFrequency(frequencyTable, PRIORITY.FREQUENCY);
+		ArrayList<ByteArrayWrapper> lengthPrioritizedList = generateSortedBytesFromFrequency(frequencyTable, PRIORITY.LENGTH);
 		Set<ByteArrayWrapper> invalidKeys = new HashSet<ByteArrayWrapper>();
 		len = lengthPrioritizedList.size();
 		for(int i=0;i<len;i++) {
 			byte[] superset = lengthPrioritizedList.get(i).getData();
 			int supersetLen = superset.length;
-			for(int j=0;j<len;j++) {
+			for(int j=i+1;j<len;j++) {
 				byte[] subset = lengthPrioritizedList.get(j).getData();
 				int subsetLen = subset.length;
 				// CHECKING IF SUBSET
@@ -174,7 +174,7 @@ public class DictionaryService {
 		ArrayList<ByteArrayWrapper> sortedBytes = new ArrayList<>();
 		sortedBytes.addAll(frequencyTable.keySet());
 		switch (priority) {
-		case FREQUENCY:
+		case LENGTH:
 			sortedBytes.sort(new Comparator<ByteArrayWrapper>() {
 				@Override
 				public int compare(ByteArrayWrapper o1, ByteArrayWrapper o2) {
@@ -183,7 +183,7 @@ public class DictionaryService {
 				}
 			});
 			break;
-		case LENGTH:
+		case FREQUENCY:
 			sortedBytes.sort(new Comparator<ByteArrayWrapper>() {
 				@Override
 				public int compare(ByteArrayWrapper o1, ByteArrayWrapper o2) {
