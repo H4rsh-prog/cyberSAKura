@@ -12,7 +12,7 @@ public class DriverService {
 	@Autowired CompressionService compressionService;
 	
 	public byte[] compressSinglePhase(byte[] data) {
-		ArrayList<byte[]> dictionary = (ArrayList<byte[]>) this.dictionaryService.createDictionary(data).stream().map(new Function<ByteArrayWrapper, byte[]>() {
+		ArrayList<byte[]> dictionary = (ArrayList<byte[]>) this.dictionaryService.createDictionaryDAC(data).stream().map(new Function<ByteArrayWrapper, byte[]>() {
 			@Override
 			public byte[] apply(ByteArrayWrapper t) {
 				return t.getData();
