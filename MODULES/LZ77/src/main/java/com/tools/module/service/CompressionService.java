@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.tools.module.model.LZDTO;
+
 
 public class CompressionService {
 	private HashMap<Integer, byte[]> cache_intToBytes = new HashMap<Integer, byte[]>();
 	
-	public byte[] compressData(ArrayList<byte[]> dictionary, byte[] data) {
+	public LZDTO compressData(ArrayList<byte[]> dictionary, byte[] data) {
 		ArrayList<Integer> indiceList = new ArrayList<Integer>();
 		int dictionarySize = dictionary.size();
 		ByteBuffer buffer = ByteBuffer.wrap(data);
@@ -31,9 +33,9 @@ public class CompressionService {
 			index++;
 			buffer.position(index);
 		}
-		return buffer.array();
+		return new LZDTO(data, dictionary, indiceList);
 	}
-	public ByteBuffer compressBuffer(byte[] originalBuffer, int placeholderIndex, int queryOffset, byte[] replacementBytes) {
+	private ByteBuffer compressBuffer(byte[] originalBuffer, int placeholderIndex, int queryOffset, byte[] replacementBytes) {
 		byte[] Lbytes, RBytes, MBytes;
 		int originalBufferSize = originalBuffer.length;
 		MBytes = RLEBytes(replacementBytes);
@@ -46,7 +48,7 @@ public class CompressionService {
 		buffer.put(placeholderIndex+compressedBytesSize, RBytes);
 		return buffer;
 	}
-	public byte[] RLEBytes(byte[] bytes) {
+	private byte[] RLEBytes(byte[] bytes) {
 		// This method is Runtime Length Encoding the bytes by left padding the byte array with its length
 		int byteSize = bytes.length;
 		if(byteSize>254) throw new RuntimeException("Byte Length Overflow");
@@ -90,7 +92,7 @@ public class CompressionService {
 		return result;
 	}
 	// FOR SOME REASON MATH.CEILDIV IS THROWING AN UNRESOLVED EXCEEPTION AS IT COULD NOT FIND IT
-	int ceilDiv(int x, int y) {
+	private int ceilDiv(int x, int y) {
         final int q = x / y;
         if ((x ^ y) >= 0 && (q * y != x)) {
             return q + 1;
