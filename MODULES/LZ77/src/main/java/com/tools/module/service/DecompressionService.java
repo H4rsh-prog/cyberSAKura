@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bouncycastle.util.Arrays;
+import org.springframework.stereotype.Service;
 
 import com.tools.module.model.LZDTO;
 
-
+@Service
 public class DecompressionService {
 	private HashMap<byte[], Integer> cache_bytesToInt = new HashMap<byte[], Integer>();
 	
