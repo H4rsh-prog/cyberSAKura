@@ -1,5 +1,6 @@
 package com.tools.module.service;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,16 +21,22 @@ public class DecompressionService {
 			bucket = new byte[1];
 			int placementIndex = indiceList.get(i);
 			bucket[0] = data[placementIndex];
-			int byteLength = bytesToInt(bucket);
-			bucket = new byte[byteLength];
-			bucket = Arrays.copyOfRange(data, placementIndex+1, placementIndex+byteLength+1);
+			int midLength = bytesToInt(bucket);
+			bucket = new byte[midLength];
+			bucket = Arrays.copyOfRange(data, placementIndex+1, placementIndex+midLength+1);
 			int dictionaryIndex = bytesToInt(bucket);
-			data = decompressBytes(data, dictionary, placementIndex, dictionaryIndex);
+			data = decompressBytes(data, dictionary.get(dictionaryIndex), placementIndex, midLength);
 		}
 		return data;
 	}
-	private byte[] decompressBytes(byte[] data, ArrayList<byte[]> dictionary, int placementIndex, int dictionaryIndex) {
-		return new byte[0];
+	private byte[] decompressBytes(byte[] data, byte[] mid, int placementIndex, int midLength) {
+		byte[] left = Arrays.copyOfRange(data, 0, placementIndex);
+		byte[] right = Arrays.copyOfRange(data, placementIndex+midLength+1, data.length);
+		ByteBuffer dataBuffer =ByteBuffer.allocate(data.length+(mid.length-(midLength+1)));
+		dataBuffer.put(0, left);
+		dataBuffer.put(placementIndex, mid);
+		dataBuffer.put(placementIndex+mid.length, right);
+		return dataBuffer.array();
 	}
 	private int bytesToInt(byte[] bytes) {
 		if(this.cache_bytesToInt.containsKey(bytes)) return this.cache_bytesToInt.get(bytes);
