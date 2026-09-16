@@ -20,8 +20,7 @@ public class DriverService {
 				return t.getData();
 			}
 		});
-		LZDTO compressedData = this.compressor.compressData(dictionary, data);
-		return compressedData;
+		return this.compressor.compressData(dictionary, data);
 	}
 	
 	public byte[] decompressSinglePhase(LZDTO compressedData) {
